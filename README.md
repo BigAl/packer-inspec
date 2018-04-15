@@ -2,7 +2,7 @@
 [Packer](https://www.packer.io) workflow integrating [Inspec](https://www.inspec.io) testing
 
 ## About
-This work is is test bed to improve our Amazon Linux AMI build workflow
+This work is is test bed to improve our [Amazon Linux AMI](https://aws.amazon.com/amazon-linux-ami/) build workflow
 
 ## Usage
 Example usage:
@@ -20,4 +20,10 @@ Cleanup
 
 ## Notes
 `ssh_private_key_file` does not appear to work as documented hence it need's to
-be used with `ssh_keypair_name` and the keypair needs to be present on AWS.
+be used with `ssh_keypair_name` and the key-pair needs to be present on AWS.
+
+## Requires
+- [Packer](https://www.packer.io)
+- [Inspec](https://www.inspec.io)
+- Generation of ssh key file as `ssh_key_packer`
+- Import of key-pair to AWS as name `packer-insepc`
