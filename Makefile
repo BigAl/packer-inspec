@@ -14,7 +14,7 @@ validate:
 		./templates/packer.json
 
 build-ami:
-	packer build -debug -var 'commit_id=$(COMMITID)' \
+	packer build -var 'commit_id=$(COMMITID)' \
 	  -var 'source_ami=${SOURCEAMI}' \
 		-var 'aws_access_key=${AWS_ACCESS_KEY}' \
 		-var 'aws_secret_key=${AWS_SECRET_KEY}' \
