@@ -1,0 +1,66 @@
+{
+  "variables": {
+    "subnet_id": "",
+    "commit_id": "",
+    "source_ami": "",
+    "app_name": "myapp",
+    "image_role": "app",
+    "ssh_key_name": "packer_inspec",
+    "ssh_private_key_file": "./files/ssh_key_packer_inspec"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "associate_public_ip_address": "true",
+      "region": "us-west-1",
+      "source_ami": "{{user `source_ami` }}",
+      "instance_type": "m3.medium",
+      "ssh_username": "ec2-user",
+      "ssh_keypair_name": "{{user `ssh_key_name`}}",
+      "ssh_private_key_file": "{{user `ssh_private_key_file`}}",
+      "ami_name": "{{user `app_name` }}_{{user `image_role`}}_{{user `tag` | clean_ami_name }}_{{user `commit_id` }}_{{isotime | clean_ami_name}}",
+      "communicator": "ssh",
+      "ssh_pty": true,
+      "subnet_id": "{{user `subnet_id` }}",
+      "ami_description": "AMI for {{user `app_name` }}, ( {{user `commit_id` }} )",
+      "spot_price": "auto",
+      "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
+      "tags": {
+        "commit_id": "{{user `commit_id` }}",
+        "build_time": "{{ isotime }}",
+        "image_role": "{{user `image_role`}}",
+        "app_name": "{{user `app_name` }}",
+        "Name": "{{user `image_role`}} for {{user `app_name` }} ({{user `commit_id` }})",
+        "amz_base_version": "{{ user `source_ami` }}"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline":[
+        "sudo yum update -y",
+        "sudo yum install -y awslogs"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [ "sudo reboot" ]
+    },
+    {
+      "pause_before": "60s",
+      "type": "shell",
+      "inline": [
+        "curl http://169.254.169.254/latest/meta-data/public-ipv4"
+      ]
+    },
+    {
+      "type": "shell-local",
+      "command": "bash ./files/inspec_tests.sh"
+    },
+    {
+      "type": "shell",
+      "inline": [ "rm /home/ec2-user/.ssh/authorized_keys" ]
+    }
+  ]
+}
