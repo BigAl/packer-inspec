@@ -5,7 +5,7 @@ while [ "${@+defined}" ]; do
   case "$1" in
     -name) shift
       image_name=${1} ;;
-    *) echo 2< 'Invalid parameters for `basename $0` [-name <ami name>)'
+    *) (>&2 echo 'Invalid parameters for `basename $0` [-name <ami name>)')
       exit 1;;
   esac
   shift
