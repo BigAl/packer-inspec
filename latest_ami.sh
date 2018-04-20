@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # Find lastest AMI from a name
 #
 while [ "${@+defined}" ]; do
